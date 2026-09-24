@@ -1,0 +1,25 @@
+{
+  "action_items": [
+    {
+      "task": "Complete the final demo video",
+      "owner": "Mohan",
+      "deadline": "Saturday",
+      "confidence": "High",
+      "evidence": "The final demo video is still pending. I will complete it by Saturday."
+    }
+  ],
+  "completed_items": [
+    {
+      "task": "Complete and submit the project report",
+      "owner": "Mithru",
+      "evidence": "The project report is completed and submitted."
+    },
+    {
+      "task": "Collect all project screenshots and add them to the report",
+      "owner": "Afzal",
+      "evidence": "I have collected all the project screenshots and added them to the report."
+    }
+  ],
+  "decisions": [],
+  "unresolved_issues": []
+}

@@ -1,0 +1,31 @@
+{
+  "action_items": [
+    {
+      "task": "Prepare the project report",
+      "owner": "Mithru",
+      "deadline": "Friday",
+      "confidence": "High",
+      "evidence": "We need to complete the project report by Friday. I will prepare the report."
+    },
+    {
+      "task": "Create the presentation slides",
+      "owner": "Mohan",
+      "deadline": "Wednesday",
+      "confidence": "High",
+      "evidence": "I'll create the presentation slides by Wednesday."
+    },
+    {
+      "task": "Collect the project screenshots",
+      "owner": "Afzal",
+      "deadline": "Thursday",
+      "confidence": "High",
+      "evidence": "I'll collect the project screenshots by Thursday."
+    }
+  ],
+  "decisions": [
+    "Python will be used for the backend."
+  ],
+  "unresolved_issues": [
+    "Deployment date"
+  ]
+}

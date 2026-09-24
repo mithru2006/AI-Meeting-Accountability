@@ -1,0 +1,25 @@
+{
+  "action_items": [
+    {
+      "task": "Complete the final demo video",
+      "owner": "Mohan",
+      "deadline": "September 21, 2026",
+      "confidence": "High",
+      "evidence": "Mohan: The final demo video was due on September 21, 2026, but it is still not completed."
+    }
+  ],
+  "completed_items": [
+    {
+      "task": "Submit the project report",
+      "owner": "Mithru",
+      "evidence": "Mithru: The project report has already been submitted."
+    },
+    {
+      "task": "Complete the project screenshots",
+      "owner": "Afzal",
+      "evidence": "Afzal: The project screenshots are also completed."
+    }
+  ],
+  "decisions": [],
+  "unresolved_issues": []
+}

@@ -1,0 +1,13 @@
+Meeting Title: Project Planning Meeting
+
+Mithru: We need to complete the project report by Friday. I will prepare the report.
+
+Mohan: I'll create the presentation slides by Wednesday.
+
+Afzal: I'll collect the project screenshots by Thursday.
+
+Mithru: We also decided that Python will be used for the backend.
+
+Mohan: What about the deployment date?
+
+Mithru: We haven't decided the deployment date yet.

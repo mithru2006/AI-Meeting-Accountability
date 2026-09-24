@@ -1,0 +1,27 @@
+{
+  "action_items": [
+    {
+      "task": "Complete the project report",
+      "owner": "Mithru",
+      "deadline": "Monday",
+      "confidence": "High",
+      "evidence": "The project report from our last meeting is still pending. I will complete it by Monday."
+    },
+    {
+      "task": "Finish collecting the project screenshots",
+      "owner": "Afzal",
+      "deadline": "tomorrow",
+      "confidence": "High",
+      "evidence": "I haven't collected the project screenshots yet. I will finish them by tomorrow."
+    },
+    {
+      "task": "Prepare the final demo video",
+      "owner": "Mohan",
+      "deadline": "Saturday",
+      "confidence": "High",
+      "evidence": "I'll also prepare the final demo video by Saturday."
+    }
+  ],
+  "decisions": [],
+  "unresolved_issues": []
+}
