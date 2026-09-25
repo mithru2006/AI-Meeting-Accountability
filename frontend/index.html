@@ -1,2587 +1,1861 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>MeetingAI - Accountability System</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Inter, Arial, sans-serif;
-        }
-
-        body {
-            background: #f5f7fb;
-            color: #172033;
-        }
-
-        button {
-            font-family: inherit;
-        }
-
-        /* ================= APP ================= */
-
-        .app {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* ================= SIDEBAR ================= */
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 245px;
-            background: #111827;
-            color: white;
-            padding: 22px 14px;
-            overflow-y: auto;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 12px 28px;
-        }
-
-        .brand-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background: #2563eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 19px;
-        }
-
-        .brand-text h2 {
-            font-size: 17px;
-        }
-
-        .brand-text p {
-            font-size: 11px;
-            color: #9ca3af;
-            margin-top: 3px;
-        }
-
-        .nav-title {
-            font-size: 10px;
-            text-transform: uppercase;
-            color: #6b7280;
-            padding: 12px;
-            letter-spacing: 1px;
-        }
-
-        .nav-btn {
-            width: 100%;
-            border: none;
-            background: transparent;
-            color: #cbd5e1;
-            padding: 11px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: left;
-            font-size: 14px;
-            margin-bottom: 3px;
-            display: flex;
-            align-items: center;
-            gap: 11px;
-        }
-
-        .nav-btn:hover {
-            background: #1f2937;
-            color: white;
-        }
-
-        .nav-btn.active {
-            background: #2563eb;
-            color: white;
-        }
-
-        .nav-icon {
-            width: 20px;
-            text-align: center;
-        }
-
-        /* ================= MAIN ================= */
-
-        .main {
-            margin-left: 245px;
-            width: calc(100% - 245px);
-            min-height: 100vh;
-        }
-
-        .topbar {
-            height: 70px;
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 32px;
-        }
-
-        .topbar-title {
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .system-status {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #22c55e;
-            border-radius: 50%;
-        }
-
-        .content {
-            padding: 32px;
-            max-width: 1500px;
-        }
-
-        /* ================= SECTIONS ================= */
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .page-header {
-            margin-bottom: 25px;
-        }
-
-        .page-header h1 {
-            font-size: 28px;
-            margin-bottom: 7px;
-        }
-
-        .page-header p {
-            color: #64748b;
-            font-size: 14px;
-        }
-
-        /* ================= DASHBOARD CARDS ================= */
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 16px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 19px;
-        }
-
-        .stat-label {
-            color: #64748b;
-            font-size: 12px;
-            margin-bottom: 10px;
-        }
-
-        .stat-value {
-            font-size: 27px;
-            font-weight: 700;
-        }
-
-        .stat-small {
-            font-size: 11px;
-            color: #94a3b8;
-            margin-top: 6px;
-        }
-
-        /* ================= GRID ================= */
-
-        .two-column {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
-        /* ================= BOX ================= */
-
-        .box {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 22px;
-            margin-bottom: 20px;
-        }
-
-        .box-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-        }
-
-        .box-header h2 {
-            font-size: 17px;
-        }
-
-        .box-header span {
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        /* ================= TABLE ================= */
-
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            text-align: left;
-            padding: 12px;
-            font-size: 11px;
-            color: #64748b;
-            background: #f8fafc;
-            border-bottom: 1px solid #e5e7eb;
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 14px 12px;
-            font-size: 13px;
-            border-bottom: 1px solid #edf0f4;
-            vertical-align: top;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* ================= STATUS ================= */
-
-        .badge {
-            display: inline-block;
-            padding: 5px 9px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-        }
-
-        .badge-new {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .badge-carried {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .badge-completed {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .badge-overdue {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        /* ================= ANALYZE FORM ================= */
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        input,
-        textarea,
-        select {
-            width: 100%;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 13px;
-            outline: none;
-            background: white;
-        }
-
-        input:focus,
-        textarea:focus,
-        select:focus {
-            border-color: #2563eb;
-        }
-
-        textarea {
-            min-height: 300px;
-            resize: vertical;
-            line-height: 1.6;
-        }
-
-        .analyze-button {
-            border: none;
-            background: #2563eb;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .analyze-button:hover {
-            background: #1d4ed8;
-        }
-
-        .message {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            display: none;
-        }
-
-        .message.success {
-            display: block;
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .message.error {
-            display: block;
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        /* ================= RESULTS ================= */
-
-        .result-section {
-            display: none;
-        }
-
-        .result-section.show {
-            display: block;
-        }
-
-        .confidence {
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .evidence-text {
-            color: #64748b;
-            font-size: 11px;
-            line-height: 1.5;
-            max-width: 300px;
-        }
-
-        .issue {
-            background: #fff7ed;
-            border-left: 4px solid #f97316;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 6px;
-            font-size: 13px;
-        }
-
-        .empty {
-            text-align: center;
-            padding: 35px 15px;
-            color: #94a3b8;
-            font-size: 13px;
-        }
-
-        /* ================= MEETING CARDS ================= */
-
-        .meeting-list {
-            display: grid;
-            gap: 12px;
-        }
-
-        .meeting-item {
-            border: 1px solid #e5e7eb;
-            border-radius: 9px;
-            padding: 16px;
-            cursor: pointer;
-        }
-
-        .meeting-item:hover {
-            background: #f8fafc;
-        }
-
-        .meeting-title {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .meeting-meta {
-            color: #64748b;
-            font-size: 11px;
-            margin-top: 6px;
-        }
-
-        /* ================= INFO CARDS ================= */
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        .info-card {
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 18px;
-        }
-
-        .info-card h3 {
-            font-size: 14px;
-            margin-bottom: 7px;
-        }
-
-        .info-card p {
-            font-size: 12px;
-            color: #64748b;
-            line-height: 1.5;
-        }
-
-        /* ================= RESPONSIVE ================= */
-
-        @media (max-width: 1100px) {
-
-            .stats {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .two-column {
-                grid-template-columns: 1fr;
-            }
-
-        }
-
-        @media (max-width: 800px) {
-
-            .sidebar {
-                width: 200px;
-            }
-
-            .main {
-                margin-left: 200px;
-                width: calc(100% - 200px);
-            }
-
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-
-        }
-
-        @media (max-width: 600px) {
-
-            .sidebar {
-                display: none;
-            }
-
-            .main {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .content {
-                padding: 18px;
-            }
-
-            .stats {
-                grid-template-columns: 1fr;
-            }
-
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeetingAI - Accountability System</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #1f2937;
+}
+
+/* SIDEBAR */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 240px;
+    height: 100vh;
+    background: #111827;
+    color: white;
+    padding: 25px 15px;
+}
+
+.brand {
+    font-size: 23px;
+    font-weight: bold;
+    padding-left: 10px;
+}
+
+.brand-subtitle {
+    color: #9ca3af;
+    font-size: 12px;
+    padding: 5px 10px 25px;
+}
+
+.nav-title {
+    color: #6b7280;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin: 20px 10px 8px;
+}
+
+.nav-item {
+    padding: 11px 12px;
+    margin: 3px 0;
+    border-radius: 7px;
+    cursor: pointer;
+    color: #d1d5db;
+    font-size: 14px;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: #1f2937;
+    color: white;
+}
+
+/* MAIN */
+.main {
+    margin-left: 240px;
+    min-height: 100vh;
+}
+
+.topbar {
+    height: 70px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+}
+
+.topbar-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.online {
+    background: #ecfdf5;
+    color: #059669;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+}
+
+.content {
+    padding: 30px;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+.page-title {
+    font-size: 27px;
+    margin-bottom: 7px;
+}
+
+.page-description {
+    color: #6b7280;
+    margin-bottom: 25px;
+}
+
+/* STATS */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.stat-label {
+    color: #6b7280;
+    font-size: 11px;
+    margin-bottom: 10px;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* CARDS */
+.card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 22px;
+    margin-bottom: 20px;
+}
+
+.card-title {
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 18px;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* FORMS */
+label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    font-size: 14px;
+}
+
+textarea {
+    min-height: 250px;
+    resize: vertical;
+    font-family: monospace;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.primary-btn {
+    background: #111827;
+    color: white;
+}
+
+.primary-btn:hover {
+    background: #1f2937;
+}
+
+/* MESSAGE */
+#message {
+    display: none;
+    padding: 12px;
+    border-radius: 7px;
+    margin-bottom: 18px;
+    font-size: 13px;
+}
+
+.message-success {
+    display: block !important;
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.message-error {
+    display: block !important;
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+/* RESULT */
+.result-item {
+    background: #fafafa;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.result-task {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.detail {
+    margin: 5px 0;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.evidence {
+    background: #f3f4f6;
+    border-left: 3px solid #6b7280;
+    padding: 10px;
+    margin-top: 12px;
+    font-size: 12px;
+}
+
+/* STATUS */
+.status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-top: 7px;
+}
+
+.status-new {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.status-carried {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.status-completed {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.status-overdue {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* TABLE */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #f9fafb;
+    padding: 13px;
+    text-align: left;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+td {
+    padding: 13px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 13px;
+}
+
+.empty {
+    text-align: center;
+    color: #9ca3af;
+    padding: 35px;
+}
+
+/* RESPONSIVE */
+@media(max-width: 1000px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 </head>
 
 
 <body>
 
-<div class="app">
+<!-- SIDEBAR -->
 
-    <!-- ================= SIDEBAR ================= -->
+<div class="sidebar">
 
-    <aside class="sidebar">
+    <div class="brand">
+        MeetingAI
+    </div>
 
-        <div class="brand">
+    <div class="brand-subtitle">
+        Accountability System
+    </div>
 
-            <div class="brand-icon">
-                🤖
-            </div>
+    <div class="nav-title">Main</div>
 
-            <div class="brand-text">
-                <h2>MeetingAI</h2>
-                <p>Accountability System</p>
-            </div>
+    <div class="nav-item active" onclick="showPage('dashboard', this)">
+        Dashboard
+    </div>
 
+    <div class="nav-item" onclick="showPage('analyze', this)">
+        Analyze Meeting
+    </div>
+
+    <div class="nav-item" onclick="showPage('meetings', this)">
+        Meetings
+    </div>
+
+    <div class="nav-title">Commitments</div>
+
+    <div class="nav-item" onclick="showPage('all', this)">
+        All Commitments
+    </div>
+
+    <div class="nav-item" onclick="showPage('new', this)">
+        New
+    </div>
+
+    <div class="nav-item" onclick="showPage('carried', this)">
+        Carried Over
+    </div>
+
+    <div class="nav-item" onclick="showPage('completed', this)">
+        Completed
+    </div>
+
+    <div class="nav-item" onclick="showPage('overdue', this)">
+        Overdue
+    </div>
+
+    <div class="nav-title">System</div>
+
+    <div class="nav-item" onclick="showPage('audit', this)">
+        Audit Trail
+    </div>
+
+    <div class="nav-item" onclick="showPage('settings', this)">
+        Settings
+    </div>
+
+</div>
+
+
+<!-- MAIN -->
+
+<div class="main">
+
+    <div class="topbar">
+
+        <div class="topbar-title">
+            AI Meeting-to-Accountability
         </div>
 
-
-        <div class="nav-title">
-            Overview
+        <div class="online">
+            ● System Online
         </div>
 
-        <button class="nav-btn active"
-                onclick="showSection('dashboard', this)">
-            <span class="nav-icon">📊</span>
-            Dashboard
-        </button>
+    </div>
 
 
-        <button class="nav-btn"
-                onclick="showSection('analyze', this)">
-            <span class="nav-icon">📝</span>
-            Analyze Meeting
-        </button>
+    <div class="content">
 
 
-        <button class="nav-btn"
-                onclick="showSection('meetings', this)">
-            <span class="nav-icon">📅</span>
-            Meetings
-        </button>
+        <!-- DASHBOARD -->
+
+        <section id="dashboard" class="page active">
+
+            <h1 class="page-title">
+                Dashboard
+            </h1>
+
+            <p class="page-description">
+                Track commitments, deadlines and accountability across meetings.
+            </p>
 
 
-        <div class="nav-title">
-            Commitments
-        </div>
+            <div class="stats">
+
+                <div class="stat-card">
+                    <div class="stat-label">
+                        TOTAL COMMITMENTS
+                    </div>
+
+                    <div id="totalCount" class="stat-value">
+                        0
+                    </div>
+                </div>
 
 
-        <button class="nav-btn"
-                onclick="showSection('commitments', this)">
-            <span class="nav-icon">📋</span>
-            All Commitments
-        </button>
+                <div class="stat-card">
+                    <div class="stat-label">
+                        NEW
+                    </div>
+
+                    <div id="newCount" class="stat-value">
+                        0
+                    </div>
+                </div>
 
 
-        <button class="nav-btn"
-                onclick="showSection('newTasks', this)">
-            <span class="nav-icon">🆕</span>
-            New
-        </button>
+                <div class="stat-card">
+                    <div class="stat-label">
+                        CARRIED OVER
+                    </div>
+
+                    <div id="carriedCount" class="stat-value">
+                        0
+                    </div>
+                </div>
 
 
-        <button class="nav-btn"
-                onclick="showSection('carried', this)">
-            <span class="nav-icon">🔄</span>
-            Carried Over
-        </button>
+                <div class="stat-card">
+                    <div class="stat-label">
+                        COMPLETED
+                    </div>
+
+                    <div id="completedCount" class="stat-value">
+                        0
+                    </div>
+                </div>
 
 
-        <button class="nav-btn"
-                onclick="showSection('completed', this)">
-            <span class="nav-icon">✅</span>
-            Completed
-        </button>
+                <div class="stat-card">
+                    <div class="stat-label">
+                        OVERDUE
+                    </div>
 
-
-        <button class="nav-btn"
-                onclick="showSection('overdue', this)">
-            <span class="nav-icon">⚠️</span>
-            Overdue
-        </button>
-
-
-        <div class="nav-title">
-            Evidence
-        </div>
-
-
-        <button class="nav-btn"
-                onclick="showSection('evidence', this)">
-            <span class="nav-icon">🔍</span>
-            Audit Trail
-        </button>
-
-
-        <button class="nav-btn"
-                onclick="showSection('settings', this)">
-            <span class="nav-icon">⚙️</span>
-            Settings
-        </button>
-
-    </aside>
-
-
-    <!-- ================= MAIN ================= -->
-
-    <main class="main">
-
-        <header class="topbar">
-
-            <div class="topbar-title">
-                AI Meeting-to-Accountability
-            </div>
-
-            <div class="system-status">
-
-                <span class="status-dot"></span>
-
-                System Online
+                    <div id="overdueCount" class="stat-value">
+                        0
+                    </div>
+                </div>
 
             </div>
 
-        </header>
 
+            <div class="grid-2">
 
-        <div class="content">
+                <div class="card">
 
-
-            <!-- ================= DASHBOARD ================= -->
-
-            <section id="dashboard" class="section active">
-
-                <div class="page-header">
-
-                    <h1>Accountability Dashboard</h1>
-
-                    <p>
-                        Turn meeting conversations into trackable commitments.
-                    </p>
-
-                </div>
-
-
-                <div class="stats">
-
-                    <div class="stat-card">
-                        <div class="stat-label">
-                            TOTAL COMMITMENTS
-                        </div>
-
-                        <div class="stat-value"
-                             id="totalCount">
-                            0
-                        </div>
-
-                        <div class="stat-small">
-                            Across analyzed meetings
-                        </div>
+                    <div class="card-title">
+                        Commitment Tracker
                     </div>
 
-
-                    <div class="stat-card">
-                        <div class="stat-label">
-                            NEW
-                        </div>
-
-                        <div class="stat-value"
-                             id="newCount">
-                            0
-                        </div>
-
-                        <div class="stat-small">
-                            Newly identified
-                        </div>
-                    </div>
-
-
-                    <div class="stat-card">
-                        <div class="stat-label">
-                            CARRIED OVER
-                        </div>
-
-                        <div class="stat-value"
-                             id="carriedCount">
-                            0
-                        </div>
-
-                        <div class="stat-small">
-                            Still pending
-                        </div>
-                    </div>
-
-
-                    <div class="stat-card">
-                        <div class="stat-label">
-                            COMPLETED
-                        </div>
-
-                        <div class="stat-value"
-                             id="completedCount">
-                            0
-                        </div>
-
-                        <div class="stat-small">
-                            Explicitly completed
-                        </div>
-                    </div>
-
-
-                    <div class="stat-card">
-                        <div class="stat-label">
-                            OVERDUE
-                        </div>
-
-                        <div class="stat-value"
-                             id="overdueCount">
-                            0
-                        </div>
-
-                        <div class="stat-small">
-                            Past deadline
+                    <div id="dashboardCommitments">
+                        <div class="empty">
+                            Analyze a meeting to see commitments.
                         </div>
                     </div>
 
                 </div>
 
 
-                <div class="two-column">
+                <div class="card">
 
-                    <div class="box">
-
-                        <div class="box-header">
-
-                            <h2>Commitment Tracker</h2>
-
-                            <span>
-                                Latest activity
-                            </span>
-
-                        </div>
-
-
-                        <div class="table-wrapper">
-
-                            <table>
-
-                                <thead>
-
-                                    <tr>
-                                        <th>Task</th>
-                                        <th>Owner</th>
-                                        <th>Deadline</th>
-                                        <th>Status</th>
-                                    </tr>
-
-                                </thead>
-
-
-                                <tbody id="trackerBody">
-
-                                    <tr>
-                                        <td colspan="4"
-                                            class="empty">
-                                            No commitments yet.
-                                        </td>
-                                    </tr>
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
+                    <div class="card-title">
+                        Recent Meetings
                     </div>
 
-
-                    <div class="box">
-
-                        <div class="box-header">
-
-                            <h2>Recent Meetings</h2>
-
-                        </div>
-
-
-                        <div id="recentMeetings"
-                             class="meeting-list">
-
-                            <div class="empty">
-                                No meetings analyzed yet.
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- ================= ANALYZE ================= -->
-
-            <section id="analyze" class="section">
-
-                <div class="page-header">
-
-                    <h1>Analyze Meeting</h1>
-
-                    <p>
-                        Extract decisions, action items, owners and deadlines from a transcript.
-                    </p>
-
-                </div>
-
-
-                <div class="box">
-
-                    <div class="form-group">
-
-                        <label>
-                            Meeting Title
-                        </label>
-
-                        <input
-                            id="meetingTitle"
-                            type="text"
-                            placeholder="Example: Project Sprint Planning Meeting"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label>
-                            Meeting Transcript
-                        </label>
-
-                        <textarea
-                            id="transcript"
-                            placeholder="Paste your meeting transcript here..."
-                        ></textarea>
-
-                    </div>
-
-
-                    <button
-                        class="analyze-button"
-                        onclick="analyzeMeeting()">
-
-                        🔍 Analyze Meeting
-
-                    </button>
-
-
-                    <div
-                        id="analysisMessage"
-                        class="message">
-                    </div>
-
-                </div>
-
-
-                <!-- RESULTS -->
-
-                <div
-                    id="resultSection"
-                    class="result-section">
-
-                    <div class="box">
-
-                        <div class="box-header">
-
-                            <h2>
-                                Extracted Action Items
-                            </h2>
-
-                            <span>
-                                AI Analysis
-                            </span>
-
-                        </div>
-
-
-                        <div class="table-wrapper">
-
-                            <table>
-
-                                <thead>
-
-                                    <tr>
-                                        <th>Task</th>
-                                        <th>Owner</th>
-                                        <th>Deadline</th>
-                                        <th>Confidence</th>
-                                        <th>Evidence</th>
-                                    </tr>
-
-                                </thead>
-
-
-                                <tbody id="resultBody">
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="box">
-
-                        <div class="box-header">
-
-                            <h2>
-                                Unresolved Issues
-                            </h2>
-
-                        </div>
-
-
-                        <div id="issuesContainer">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- ================= MEETINGS ================= -->
-
-            <section id="meetings" class="section">
-
-                <div class="page-header">
-
-                    <h1>Meetings</h1>
-
-                    <p>
-                        History of analyzed meetings.
-                    </p>
-
-                </div>
-
-
-                <div class="box">
-
-                    <div id="meetingHistory"
-                         class="meeting-list">
-
+                    <div id="dashboardMeetings">
                         <div class="empty">
                             No meetings analyzed yet.
                         </div>
-
                     </div>
 
                 </div>
 
-            </section>
+            </div>
+
+        </section>
 
 
-            <!-- ================= ALL COMMITMENTS ================= -->
+        <!-- ANALYZE -->
 
-            <section id="commitments" class="section">
+        <section id="analyze" class="page">
 
-                <div class="page-header">
+            <h1 class="page-title">
+                Analyze Meeting
+            </h1>
 
-                    <h1>All Commitments</h1>
+            <p class="page-description">
+                Convert meeting conversations into accountable action items.
+            </p>
 
-                    <p>
-                        Complete list of tracked commitments.
-                    </p>
 
+            <div class="card">
+
+                <div id="message"></div>
+
+
+                <label>
+                    Meeting Title
+                </label>
+
+                <input
+                    id="meetingTitle"
+                    type="text"
+                    placeholder="Example: Project Progress Meeting"
+                >
+
+
+                <label>
+                    Meeting Transcript
+                </label>
+
+                <textarea
+                    id="transcript"
+                    placeholder="Paste the meeting transcript here..."
+                ></textarea>
+
+
+                <button
+                    class="primary-btn"
+                    onclick="analyzeMeeting()"
+                >
+                    Analyze Meeting
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    Analysis Result
                 </div>
 
+                <div id="analysisResult">
 
-                <div class="box">
-
-                    <div class="table-wrapper">
-
-                        <table>
-
-                            <thead>
-
-                                <tr>
-                                    <th>Task</th>
-                                    <th>Owner</th>
-                                    <th>Deadline</th>
-                                    <th>Status</th>
-                                    <th>Confidence</th>
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody id="commitmentBody">
-
-                                <tr>
-                                    <td colspan="5"
-                                        class="empty">
-                                        No commitments yet.
-                                    </td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
+                    <div class="empty">
+                        Analysis results will appear here.
                     </div>
 
                 </div>
 
-            </section>
+            </div>
+
+        </section>
 
 
-            <!-- ================= NEW ================= -->
+        <!-- MEETINGS -->
 
-            <section id="newTasks" class="section">
+        <section id="meetings" class="page">
 
-                <div class="page-header">
+            <h1 class="page-title">
+                Meetings
+            </h1>
 
-                    <h1>New Commitments</h1>
+            <p class="page-description">
+                Previously analyzed meetings.
+            </p>
 
-                    <p>
-                        Action items identified for the first time.
-                    </p>
+            <div class="card">
 
-                </div>
-
-
-                <div class="box">
-
-                    <div class="table-wrapper">
-
-                        <table>
-
-                            <thead>
-
-                                <tr>
-                                    <th>Task</th>
-                                    <th>Owner</th>
-                                    <th>Deadline</th>
-                                    <th>Status</th>
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody id="newBody">
-
-                                <tr>
-                                    <td colspan="4"
-                                        class="empty">
-                                        No new commitments.
-                                    </td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
+                <div id="meetingsList">
+                    <div class="empty">
+                        No meetings analyzed yet.
                     </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ALL -->
+
+        <section id="all" class="page">
+
+            <h1 class="page-title">
+                All Commitments
+            </h1>
+
+            <p class="page-description">
+                Every commitment extracted from meetings.
+            </p>
+
+            <div class="card">
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Task</th>
+                                <th>Owner</th>
+                                <th>Deadline</th>
+                                <th>Status</th>
+                                <th>Confidence</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="allCommitmentsTable">
+                        </tbody>
+
+                    </table>
 
                 </div>
 
-            </section>
+            </div>
+
+        </section>
 
 
-            <!-- ================= CARRIED ================= -->
+        <!-- NEW -->
 
-            <section id="carried" class="section">
+        <section id="new" class="page">
 
-                <div class="page-header">
+            <h1 class="page-title">
+                New Commitments
+            </h1>
 
-                    <h1>Carried Over</h1>
+            <p class="page-description">
+                Newly identified action items.
+            </p>
 
-                    <p>
-                        Commitments that remain unresolved across meetings.
-                    </p>
+            <div class="card">
 
-                </div>
-
-
-                <div class="box">
-
-                    <div class="table-wrapper">
-
-                        <table>
-
-                            <thead>
-
-                                <tr>
-                                    <th>Task</th>
-                                    <th>Owner</th>
-                                    <th>Previous Deadline</th>
-                                    <th>Status</th>
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody id="carriedBody">
-
-                                <tr>
-                                    <td colspan="4"
-                                        class="empty">
-                                        No carried-over commitments.
-                                    </td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
+                <div id="newCommitmentsList">
+                    <div class="empty">
+                        No new commitments.
                     </div>
-
                 </div>
 
-            </section>
+            </div>
+
+        </section>
 
 
-            <!-- ================= COMPLETED ================= -->
+        <!-- CARRIED -->
 
-            <section id="completed" class="section">
+        <section id="carried" class="page">
 
-                <div class="page-header">
+            <h1 class="page-title">
+                Carried Over
+            </h1>
 
-                    <h1>Completed</h1>
+            <p class="page-description">
+                Pending commitments carried from previous meetings.
+            </p>
 
-                    <p>
-                        Commitments explicitly confirmed as completed.
-                    </p>
+            <div class="card">
 
-                </div>
-
-
-                <div class="box">
-
-                    <div class="table-wrapper">
-
-                        <table>
-
-                            <thead>
-
-                                <tr>
-                                    <th>Task</th>
-                                    <th>Owner</th>
-                                    <th>Status</th>
-                                    <th>Evidence</th>
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody id="completedBody">
-
-                                <tr>
-                                    <td colspan="4"
-                                        class="empty">
-                                        No completed commitments yet.
-                                    </td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
+                <div id="carriedCommitmentsList">
+                    <div class="empty">
+                        No carried-over commitments.
                     </div>
-
                 </div>
 
-            </section>
+            </div>
+
+        </section>
 
 
-            <!-- ================= OVERDUE ================= -->
+        <!-- COMPLETED -->
 
-            <section id="overdue" class="section">
+        <section id="completed" class="page">
 
-                <div class="page-header">
+            <h1 class="page-title">
+                Completed Commitments
+            </h1>
 
-                    <h1>Overdue Commitments</h1>
+            <p class="page-description">
+                Commitments explicitly completed in meetings.
+            </p>
 
-                    <p>
-                        Tasks whose deadlines have passed without completion.
-                    </p>
+            <div class="card">
 
-                </div>
-
-
-                <div class="box">
-
-                    <div class="table-wrapper">
-
-                        <table>
-
-                            <thead>
-
-                                <tr>
-                                    <th>Task</th>
-                                    <th>Owner</th>
-                                    <th>Deadline</th>
-                                    <th>Status</th>
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody id="overdueBody">
-
-                                <tr>
-                                    <td colspan="4"
-                                        class="empty">
-                                        No overdue commitments.
-                                    </td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
+                <div id="completedCommitmentsList">
+                    <div class="empty">
+                        No completed commitments.
                     </div>
-
                 </div>
 
-            </section>
+            </div>
+
+        </section>
 
 
-            <!-- ================= EVIDENCE ================= -->
+        <!-- OVERDUE -->
 
-            <section id="evidence" class="section">
+        <section id="overdue" class="page">
 
-                <div class="page-header">
+            <h1 class="page-title">
+                Overdue Commitments
+            </h1>
 
-                    <h1>Evidence / Audit Trail</h1>
+            <p class="page-description">
+                Commitments whose deadlines have passed.
+            </p>
 
-                    <p>
-                        Every extracted commitment is linked to its original transcript evidence.
-                    </p>
+            <div class="card">
 
-                </div>
-
-
-                <div class="box">
-
-                    <div class="table-wrapper">
-
-                        <table>
-
-                            <thead>
-
-                                <tr>
-                                    <th>Task</th>
-                                    <th>Owner</th>
-                                    <th>Confidence</th>
-                                    <th>Source Evidence</th>
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody id="evidenceBody">
-
-                                <tr>
-                                    <td colspan="4"
-                                        class="empty">
-                                        No evidence available yet.
-                                    </td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
+                <div id="overdueCommitmentsList">
+                    <div class="empty">
+                        No overdue commitments.
                     </div>
-
                 </div>
 
-            </section>
+            </div>
+
+        </section>
 
 
-            <!-- ================= SETTINGS ================= -->
+        <!-- AUDIT -->
 
-            <section id="settings" class="section">
+        <section id="audit" class="page">
 
-                <div class="page-header">
+            <h1 class="page-title">
+                Audit Trail
+            </h1>
 
-                    <h1>Settings</h1>
+            <p class="page-description">
+                Original evidence supporting each extracted commitment.
+            </p>
 
-                    <p>
-                        System configuration and project information.
-                    </p>
+            <div class="card">
 
+                <div id="auditList">
+                    <div class="empty">
+                        No audit evidence yet.
+                    </div>
                 </div>
 
+            </div>
 
-                <div class="info-grid">
-
-                    <div class="info-card">
-
-                        <h3>AI Extraction</h3>
-
-                        <p>
-                            Gemini is used to extract action items,
-                            owners, deadlines, decisions and unresolved issues.
-                        </p>
-
-                    </div>
+        </section>
 
 
-                    <div class="info-card">
+        <!-- SETTINGS -->
 
-                        <h3>Accountability Engine</h3>
+        <section id="settings" class="page">
 
-                        <p>
-                            Cross-meeting matching identifies new,
-                            carried-over, completed and overdue commitments.
-                        </p>
+            <h1 class="page-title">
+                Settings
+            </h1>
 
-                    </div>
+            <p class="page-description">
+                System information.
+            </p>
 
+            <div class="card">
 
-                    <div class="info-card">
-
-                        <h3>Evidence Protection</h3>
-
-                        <p>
-                            Source transcript evidence is retained
-                            to reduce hallucination and improve trust.
-                        </p>
-
-                    </div>
-
+                <div class="card-title">
+                    AI Meeting-to-Accountability System
                 </div>
 
-            </section>
+                <p style="line-height:1.8;color:#6b7280;">
 
-        </div>
+                    MeetingAI converts meeting transcripts into
+                    structured commitments, identifies owners and
+                    deadlines, and preserves transcript evidence.
 
-    </main>
+                    <br><br>
+
+                    Backend:
+                    Flask + Gemini
+
+                    <br><br>
+
+                    Frontend:
+                    HTML + CSS + JavaScript
+
+                    <br><br>
+
+                    Database:
+                    SQLite
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+    </div>
 
 </div>
 
 
 <script>
 
-    /* =====================================================
-       DATA
-    ===================================================== */
+/* =====================================================
+   GLOBAL DATA
+===================================================== */
 
-    let allCommitments = [];
+let allCommitments = [];
+let completedItems = [];
+let meetings = [];
+// ==========================================================
+// LOAD PERSISTENT DATA FROM BACKEND / SQLITE
+// ==========================================================
 
-    let completedItems = [];
+async function loadDashboardData() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/api/commitments");
 
-    let meetings = [];
-
-
-    /* =====================================================
-       NAVIGATION
-    ===================================================== */
-
-    function showSection(sectionId, button) {
-
-        document
-            .querySelectorAll(".section")
-            .forEach(section => {
-
-                section.classList.remove("active");
-
-            });
-
-
-        const target =
-            document.getElementById(sectionId);
-
-
-        if (target) {
-
-            target.classList.add("active");
-
+        if (!response.ok) {
+            throw new Error("Failed to load commitments");
         }
 
+        const data = await response.json();
 
-        document
-            .querySelectorAll(".nav-btn")
-            .forEach(btn => {
+        // Load all commitments from SQLite
+        allCommitments = data.commitments || [];
 
-                btn.classList.remove("active");
+        // Keep completed items separately for existing UI
+        completedItems = allCommitments.filter(
+            item => item.status === "COMPLETED"
+        );
+        const meetingsResponse =
+    await fetch("http://127.0.0.1:5000/api/meetings");
 
-            });
+if (meetingsResponse.ok) {
+    const meetingsData = await meetingsResponse.json();
+    meetings = meetingsData.meetings || [];
+}
 
+        console.log("Loaded commitments from SQLite:", allCommitments);
 
-        if (button) {
-
-            button.classList.add("active");
-
+        // Refresh dashboard
+        if (typeof updateDashboard === "function") {
+            updateDashboard();
         }
 
+        if (typeof renderAllCommitments === "function") {
+            renderAllCommitments();
+        }
+
+        if (typeof renderAuditTrail === "function") {
+            renderAuditTrail();
+        }
+
+    } catch (error) {
+        console.error("Could not load SQLite data:", error);
+    }
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+function showPage(pageId, element) {
+
+    document.querySelectorAll(".page").forEach(function(page) {
+        page.classList.remove("active");
+    });
+
+    const page = document.getElementById(pageId);
+
+    if (page) {
+        page.classList.add("active");
+    }
+
+    document.querySelectorAll(".nav-item").forEach(function(item) {
+        item.classList.remove("active");
+    });
+
+    if (element) {
+        element.classList.add("active");
+    }
+
+    if (pageId === "dashboard") {
+        updateDashboard();
+    }
+
+    if (pageId === "all") {
+        renderAllCommitments();
+    }
+
+    if (pageId === "new") {
+        renderNewCommitments();
+    }
+
+    if (pageId === "carried") {
+        renderCarriedOverCommitments();
+    }
+
+    if (pageId === "completed") {
+        renderCompletedCommitments();
+    }
+
+    if (pageId === "overdue") {
+        renderOverdueCommitments();
+    }
+
+    if (pageId === "meetings") {
+        renderMeetings();
+    }
+
+    if (pageId === "audit") {
+        renderAuditTrail();
+    }
+}
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(message, type) {
+
+    const box = document.getElementById("message");
+
+    if (!box) return;
+
+    box.textContent = message;
+
+    box.className =
+        type === "error"
+        ? "message-error"
+        : "message-success";
+
+    box.style.display = "block";
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(value) {
+
+    const div = document.createElement("div");
+
+    div.textContent =
+        value === null || value === undefined
+        ? ""
+        : String(value);
+
+    return div.innerHTML;
+}
+
+
+/* =====================================================
+   STATUS BADGE
+===================================================== */
+
+function statusBadge(status) {
+
+    if (status === "COMPLETED") {
+
+        return `
+            <span class="status status-completed">
+                COMPLETED
+            </span>
+        `;
+    }
+
+    if (status === "CARRIED OVER") {
+
+        return `
+            <span class="status status-carried">
+                CARRIED OVER
+            </span>
+        `;
+    }
+
+    if (status === "OVERDUE") {
+
+        return `
+            <span class="status status-overdue">
+                OVERDUE
+            </span>
+        `;
+    }
+
+    return `
+        <span class="status status-new">
+            NEW
+        </span>
+    `;
+}
+
+
+/* =====================================================
+   ANALYZE MEETING
+===================================================== */
+
+async function analyzeMeeting() {
+
+    const title =
+        document.getElementById("meetingTitle")
+        .value
+        .trim();
+
+    const transcript =
+        document.getElementById("transcript")
+        .value
+        .trim();
+
+
+    if (!title) {
+
+        showMessage(
+            "Please enter a meeting title.",
+            "error"
+        );
+
+        return;
     }
 
 
-    /* =====================================================
-       ANALYZE MEETING
-    ===================================================== */
-
-    async function analyzeMeeting() {
-
-        const title =
-            document
-                .getElementById("meetingTitle")
-                .value
-                .trim();
-
-
-        const transcript =
-            document
-                .getElementById("transcript")
-                .value
-                .trim();
-
-
-        if (!title) {
-
-            showMessage(
-                "Please enter a meeting title.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        if (!transcript) {
-
-            showMessage(
-                "Please paste the meeting transcript.",
-                "error"
-            );
-
-            return;
-
-        }
-
+    if (!transcript) {
 
         showMessage(
-            "Analyzing meeting transcript...",
+            "Please paste the meeting transcript.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    showMessage(
+        "Analyzing meeting transcript...",
+        "success"
+    );
+
+
+    try {
+
+        const response = await fetch(
+            "http://127.0.0.1:5000/api/analyze",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    title: title,
+                    transcript: transcript
+                })
+            }
+        );
+
+
+        const data = await response.json();
+
+
+        console.log(
+            "Analysis result:",
+            data
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Analysis failed."
+            );
+        }
+
+
+        /*
+         * IMPORTANT:
+         * Read the exact JSON returned by Flask.
+         */
+
+        const actionItems =
+            Array.isArray(data.action_items)
+            ? data.action_items
+            : [];
+
+
+        const completed =
+            Array.isArray(data.completed_items)
+            ? data.completed_items
+            : [];
+
+
+        /*
+         * Clear old frontend data.
+         */
+
+        allCommitments = [];
+        completedItems = [];
+
+
+        /*
+         * Store action items.
+         */
+
+      
+
+        /*
+         * Store completed items.
+         */
+
+       
+
+
+        /*
+         * Store meeting.
+         */
+
+        meetings.push({
+
+            title:
+                title,
+
+            action_items:
+                actionItems,
+
+            completed_items:
+                completed,
+
+            date:
+                new Date().toLocaleString()
+        });
+
+
+        /*
+         * Render all UI.
+         */
+
+       await loadDashboardData();
+
+renderAnalysisResult();
+renderNewCommitments();
+renderCompletedCommitments();
+renderCarriedOverCommitments();
+renderOverdueCommitments();
+renderMeetings();
+updateDashboard();
+
+        showMessage(
+            "Meeting analyzed successfully!",
             "success"
         );
 
 
-        try {
+    } catch (error) {
 
-            const response =
-                await fetch(
-                    "http://127.0.0.1:5000/api/analyze",
-                    {
+        console.error(
+            "Analysis error:",
+            error
+        );
 
-                        method: "POST",
+        showMessage(
+            error.message ||
+            "Unable to analyze the meeting.",
+            "error"
+        );
 
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-
-                        body: JSON.stringify({
-
-                            title: title,
-
-                            transcript: transcript
-
-                        })
-
-                    }
-                );
+    }
+}
 
 
-            const data =
-                await response.json();
+/* =====================================================
+   ANALYSIS RESULT
+===================================================== */
+
+function renderAnalysisResult() {
+
+    const container =
+        document.getElementById(
+            "analysisResult"
+        );
 
 
-            if (!response.ok) {
-
-                throw new Error(
-                    data.error ||
-                    "Analysis failed."
-                );
-
-            }
+    container.innerHTML = "";
 
 
-            console.log(
-                "Analysis result:",
-                data
-            );
+    const allResults = [
+    ...allCommitments
+];
 
 
-            processAnalysis(
-                title,
-                transcript,
-                data
-            );
+    if (allResults.length === 0) {
 
+        container.innerHTML = `
+            <div class="empty">
+                No action items were identified.
+            </div>
+        `;
 
-            showMessage(
-                "Meeting analyzed successfully!",
-                "success"
-            );
-
-        }
-
-        catch (error) {
-
-            console.error(error);
-
-
-            showMessage(
-                "Could not connect to the backend. Make sure Flask is running.",
-                "error"
-            );
-
-        }
-
+        return;
     }
 
 
-    /* =====================================================
-       PROCESS ANALYSIS
-    ===================================================== */
+    allResults.forEach(function(item) {
 
-    function processAnalysis(
-        title,
-        transcript,
-        data
-    ) {
+        const div =
+            document.createElement("div");
 
-        const actionItems =
-            data.action_items || [];
+        div.className =
+            "result-item";
 
 
-        const completed =
-            data.completed_items || [];
+        div.innerHTML = `
+
+            <div class="result-task">
+                ${escapeHTML(item.task)}
+            </div>
+
+            <div class="detail">
+                <strong>Owner:</strong>
+                ${escapeHTML(item.owner)}
+            </div>
+
+            <div class="detail">
+                <strong>Deadline:</strong>
+                ${escapeHTML(item.deadline)}
+            </div>
+
+            <div class="detail">
+                <strong>Confidence:</strong>
+                ${escapeHTML(item.confidence)}
+            </div>
+
+            <div>
+                ${statusBadge(item.status)}
+            </div>
+
+            <div class="evidence">
+                <strong>Evidence:</strong><br>
+                ${escapeHTML(item.evidence)}
+            </div>
+
+        `;
 
 
-        allCommitments =
-            actionItems.map(item => ({
+        container.appendChild(div);
 
-                ...item,
-
-                status: "NEW",
-
-                meeting: title
-
-            }));
+    });
+}
 
 
-        completedItems =
-            completed.map(item => ({
+/* =====================================================
+   DASHBOARD
+===================================================== */
 
-                ...item,
+function updateDashboard() {
 
-                status: "COMPLETED",
-
-                meeting: title
-
-            }));
+    const total =
+        allCommitments.length +
+        completedItems.length;
 
 
-        meetings.unshift({
+    const newCount =
+        allCommitments.filter(function(item) {
+            return item.status === "NEW";
+        }).length;
 
-            title: title,
 
-            transcript: transcript,
+    const carriedCount =
+        allCommitments.filter(function(item) {
+            return item.status === "CARRIED OVER";
+        }).length;
 
-            date: new Date().toLocaleString(),
 
-            commitments: actionItems.length
+    const completedCount =
+        completedItems.length;
+
+
+    const overdueCount =
+        allCommitments.filter(function(item) {
+            return item.status === "OVERDUE";
+        }).length;
+
+
+    document.getElementById(
+        "totalCount"
+    ).textContent = total;
+
+
+    document.getElementById(
+        "newCount"
+    ).textContent = newCount;
+
+
+    document.getElementById(
+        "carriedCount"
+    ).textContent = carriedCount;
+
+
+    document.getElementById(
+        "completedCount"
+    ).textContent = completedCount;
+
+
+    document.getElementById(
+        "overdueCount"
+    ).textContent = overdueCount;
+
+
+    renderDashboardCommitments();
+
+    renderDashboardMeetings();
+}
+
+
+/* =====================================================
+   DASHBOARD COMMITMENTS
+===================================================== */
+
+function renderDashboardCommitments() {
+
+    const container =
+        document.getElementById(
+            "dashboardCommitments"
+        );
+
+
+    const items = [
+        ...allCommitments,
+        ...completedItems
+    ];
+
+
+    container.innerHTML = "";
+
+
+    if (items.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty">
+                Analyze a meeting to see commitments.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    items.forEach(function(item) {
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "result-item";
+
+
+        div.innerHTML = `
+
+            <div class="result-task">
+                ${escapeHTML(item.task)}
+            </div>
+
+            <div class="detail">
+                <strong>Owner:</strong>
+                ${escapeHTML(item.owner)}
+            </div>
+
+            <div class="detail">
+                <strong>Deadline:</strong>
+                ${escapeHTML(item.deadline)}
+            </div>
+
+            ${statusBadge(item.status)}
+
+        `;
+
+
+        container.appendChild(div);
+
+    });
+}
+
+
+/* =====================================================
+   DASHBOARD MEETINGS
+===================================================== */
+
+ function renderDashboardMeetings() {
+
+    const container =
+        document.getElementById("dashboardMeetings");
+
+    container.innerHTML = "";
+
+    if (!meetings || meetings.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty">
+                No meetings analyzed yet.
+            </div>
+        `;
+
+        return;
+    }
+
+    meetings.slice().reverse().forEach(function(meeting) {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "result-item";
+
+        const actionCount =
+            Array.isArray(meeting.action_items)
+                ? meeting.action_items.length
+                : 0;
+
+        const completedCount =
+            Array.isArray(meeting.completed_items)
+                ? meeting.completed_items.length
+                : 0;
+
+        div.innerHTML = `
+
+            <div class="result-task">
+                ${escapeHTML(meeting.title || "Untitled Meeting")}
+            </div>
+
+            <div class="detail">
+                Date:
+                ${escapeHTML(meeting.date || "Not specified")}
+            </div>
+
+            <div class="detail">
+                Action Items:
+                ${actionCount}
+            </div>
+
+            <div class="detail">
+                Completed:
+                ${completedCount}
+            </div>
+
+        `;
+
+        container.appendChild(div);
+
+    });
+}
+
+
+
+/* =====================================================
+   ALL COMMITMENTS
+===================================================== */
+
+
+    function renderAllCommitments() {
+
+    const table =
+        document.getElementById("allCommitmentsTable");
+
+    table.innerHTML = "";
+
+    const items = allCommitments;
+
+    if (items.length === 0) {
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    <div class="empty">
+                        No commitments yet.
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    items.forEach(function(item) {
+
+        const row =
+            document.createElement("tr");
+
+        row.innerHTML = `
+
+            <td>
+                ${escapeHTML(item.task)}
+            </td>
+
+            <td>
+                ${escapeHTML(item.owner)}
+            </td>
+
+            <td>
+                ${escapeHTML(item.deadline)}
+            </td>
+
+            <td>
+                ${statusBadge(item.status)}
+            </td>
+
+            <td>
+                ${escapeHTML(item.confidence)}
+            </td>
+
+        `;
+
+        table.appendChild(row);
+
+    });
+}
+
+/* =====================================================
+   NEW
+===================================================== */
+
+function renderNewCommitments() {
+
+    const items =
+        allCommitments.filter(function(item) {
+
+            return item.status === "NEW";
 
         });
 
 
-        updateDashboard();
+    renderCards(
+        "newCommitmentsList",
+        items,
+        "No new commitments."
+    );
+}
 
 
-        displayResults(data);
+/* =====================================================
+   COMPLETED
+===================================================== */
 
+function renderCompletedCommitments() {
 
-        document
-            .getElementById("resultSection")
-            .classList.add("show");
+    renderCards(
+        "completedCommitmentsList",
+        completedItems,
+        "No completed commitments."
+    );
+}
 
 
-        showSection(
-            "analyze",
-            document.querySelector(
-                ".nav-btn:nth-of-type(2)"
-            )
-        );
+/* =====================================================
+   CARRIED OVER
+===================================================== */
 
-    }
+function renderCarriedOverCommitments() {
 
+    const items =
+        allCommitments.filter(function(item) {
 
-    /* =====================================================
-       DISPLAY RESULTS
-    ===================================================== */
+            return item.status === "CARRIED OVER";
 
-    function displayResults(data) {
+        });
 
-        const items =
-            data.action_items || [];
 
+    renderCards(
+        "carriedCommitmentsList",
+        items,
+        "No carried-over commitments."
+    );
+}
 
-        const resultBody =
-            document.getElementById(
-                "resultBody"
-            );
 
+/* =====================================================
+   OVERDUE
+===================================================== */
 
-        if (items.length === 0) {
+function renderOverdueCommitments() {
 
-            resultBody.innerHTML = `
+    const items =
+        allCommitments.filter(function(item) {
 
-                <tr>
+            return item.status === "OVERDUE";
 
-                    <td
-                        colspan="5"
-                        class="empty">
+        });
 
-                        No action items found.
 
-                    </td>
+    renderCards(
+        "overdueCommitmentsList",
+        items,
+        "No overdue commitments."
+    );
+}
 
-                </tr>
 
-            `;
+/* =====================================================
+   GENERIC CARDS
+===================================================== */
+function renderCards
+(
+    elementId,
+    items,
+    emptyMessage
+) {
 
-        }
+    const container =
+        document.getElementById(elementId);
 
-        else {
 
-            resultBody.innerHTML =
-                items.map(item => `
+    container.innerHTML = "";
 
-                    <tr>
 
-                        <td>
-                            <strong>
-                                ${escapeHTML(item.task)}
-                            </strong>
-                        </td>
+    if (items.length === 0) {
 
-                        <td>
-                            ${escapeHTML(item.owner)}
-                        </td>
-
-                        <td>
-                            ${escapeHTML(item.deadline)}
-                        </td>
-
-                        <td>
-
-                            <span class="confidence">
-
-                                ${escapeHTML(
-                                    item.confidence ||
-                                    "Not specified"
-                                )}
-
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <div class="evidence-text">
-
-                                ${escapeHTML(
-                                    item.evidence ||
-                                    "No evidence provided"
-                                )}
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                `).join("");
-
-        }
-
-
-        /* ================= ISSUES ================= */
-
-        const issues =
-            data.unresolved_issues || [];
-
-
-        const issuesContainer =
-            document.getElementById(
-                "issuesContainer"
-            );
-
-
-        if (issues.length === 0) {
-
-            issuesContainer.innerHTML = `
-
-                <div class="empty">
-                    No unresolved issues identified.
-                </div>
-
-            `;
-
-        }
-
-        else {
-
-            issuesContainer.innerHTML =
-                issues.map(issue => `
-
-                    <div class="issue">
-
-                        ⚠️ ${escapeHTML(issue)}
-
-                    </div>
-
-                `).join("");
-
-        }
-
-    }
-
-
-    /* =====================================================
-       UPDATE DASHBOARD
-    ===================================================== */
-
-    function updateDashboard() {
-
-        const total =
-            allCommitments.length +
-            completedItems.length;
-
-
-        document.getElementById(
-            "totalCount"
-        ).textContent = total;
-
-
-        const newItems =
-            allCommitments.filter(
-                item => item.status === "NEW"
-            );
-
-
-        const carriedItems =
-            allCommitments.filter(
-                item => item.status === "CARRIED OVER"
-            );
-
-
-        const overdueItems =
-            allCommitments.filter(
-                item => item.status === "OVERDUE"
-            );
-
-
-        document.getElementById(
-            "newCount"
-        ).textContent =
-            newItems.length;
-
-
-        document.getElementById(
-            "carriedCount"
-        ).textContent =
-            carriedItems.length;
-
-
-        document.getElementById(
-            "completedCount"
-        ).textContent =
-            completedItems.length;
-
-
-        document.getElementById(
-            "overdueCount"
-        ).textContent =
-            overdueItems.length;
-
-
-        updateTracker();
-
-
-        updateAllCommitments();
-
-
-        updateNew();
-
-
-        updateCarried();
-
-
-        updateCompleted();
-
-
-        updateOverdue();
-
-
-        updateEvidence();
-
-
-        updateMeetings();
-
-    }
-
-
-    /* =====================================================
-       TRACKER
-    ===================================================== */
-
-    function updateTracker() {
-
-        const body =
-            document.getElementById(
-                "trackerBody"
-            );
-
-
-        const items =
-            [
-                ...allCommitments,
-                ...completedItems
-            ];
-
-
-        if (items.length === 0) {
-
-            body.innerHTML = `
-
-                <tr>
-                    <td colspan="4"
-                        class="empty">
-                        No commitments yet.
-                    </td>
-                </tr>
-
-            `;
-
-            return;
-
-        }
-
-
-        body.innerHTML =
-            items.map(item => `
-
-                <tr>
-
-                    <td>
-                        <strong>
-                            ${escapeHTML(item.task)}
-                        </strong>
-                    </td>
-
-                    <td>
-                        ${escapeHTML(item.owner)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            item.deadline ||
-                            "Not specified"
-                        )}
-                    </td>
-
-                    <td>
-                        ${statusBadge(
-                            item.status
-                        )}
-                    </td>
-
-                </tr>
-
-            `).join("");
-
-    }
-
-
-    /* =====================================================
-       ALL COMMITMENTS
-    ===================================================== */
-
-    function updateAllCommitments() {
-
-        const body =
-            document.getElementById(
-                "commitmentBody"
-            );
-
-
-        const items =
-            [
-                ...allCommitments,
-                ...completedItems
-            ];
-
-
-        if (items.length === 0) {
-
-            body.innerHTML = `
-
-                <tr>
-                    <td colspan="5"
-                        class="empty">
-                        No commitments yet.
-                    </td>
-                </tr>
-
-            `;
-
-            return;
-
-        }
-
-
-        body.innerHTML =
-            items.map(item => `
-
-                <tr>
-
-                    <td>
-                        ${escapeHTML(item.task)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(item.owner)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            item.deadline ||
-                            "Not specified"
-                        )}
-                    </td>
-
-                    <td>
-                        ${statusBadge(
-                            item.status
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            item.confidence ||
-                            "Not specified"
-                        )}
-                    </td>
-
-                </tr>
-
-            `).join("");
-
-    }
-
-
-    /* =====================================================
-       NEW
-    ===================================================== */
-
-    function updateNew() {
-
-        const body =
-            document.getElementById(
-                "newBody"
-            );
-
-
-        const items =
-            allCommitments.filter(
-                item => item.status === "NEW"
-            );
-
-
-        if (items.length === 0) {
-
-            body.innerHTML = `
-
-                <tr>
-                    <td colspan="4"
-                        class="empty">
-                        No new commitments.
-                    </td>
-                </tr>
-
-            `;
-
-            return;
-
-        }
-
-
-        body.innerHTML =
-            items.map(item => `
-
-                <tr>
-
-                    <td>
-                        ${escapeHTML(item.task)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(item.owner)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            item.deadline ||
-                            "Not specified"
-                        )}
-                    </td>
-
-                    <td>
-                        ${statusBadge("NEW")}
-                    </td>
-
-                </tr>
-
-            `).join("");
-
-    }
-
-
-    /* =====================================================
-       CARRIED
-    ===================================================== */
-
-    function updateCarried() {
-
-        const body =
-            document.getElementById(
-                "carriedBody"
-            );
-
-
-        const items =
-            allCommitments.filter(
-                item => item.status === "CARRIED OVER"
-            );
-
-
-        if (items.length === 0) {
-
-            body.innerHTML = `
-
-                <tr>
-                    <td colspan="4"
-                        class="empty">
-                        No carried-over commitments.
-                    </td>
-                </tr>
-
-            `;
-
-            return;
-
-        }
-
-
-        body.innerHTML =
-            items.map(item => `
-
-                <tr>
-
-                    <td>
-                        ${escapeHTML(item.task)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(item.owner)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            item.deadline ||
-                            "Not specified"
-                        )}
-                    </td>
-
-                    <td>
-                        ${statusBadge(
-                            "CARRIED OVER"
-                        )}
-                    </td>
-
-                </tr>
-
-            `).join("");
-
-    }
-
-
-    /* =====================================================
-       COMPLETED
-    ===================================================== */
-
-    function updateCompleted() {
-
-        const body =
-            document.getElementById(
-                "completedBody"
-            );
-
-
-        if (completedItems.length === 0) {
-
-            body.innerHTML = `
-
-                <tr>
-                    <td colspan="4"
-                        class="empty">
-                        No completed commitments yet.
-                    </td>
-                </tr>
-
-            `;
-
-            return;
-
-        }
-
-
-        body.innerHTML =
-            completedItems.map(item => `
-
-                <tr>
-
-                    <td>
-                        ${escapeHTML(item.task)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(item.owner)}
-                    </td>
-
-                    <td>
-                        ${statusBadge("COMPLETED")}
-                    </td>
-
-                    <td>
-                        <div class="evidence-text">
-                            ${escapeHTML(
-                                item.evidence ||
-                                "No evidence provided"
-                            )}
-                        </div>
-                    </td>
-
-                </tr>
-
-            `).join("");
-
-    }
-
-
-    /* =====================================================
-       OVERDUE
-    ===================================================== */
-
-    function updateOverdue() {
-
-        const body =
-            document.getElementById(
-                "overdueBody"
-            );
-
-
-        const items =
-            allCommitments.filter(
-                item => item.status === "OVERDUE"
-            );
-
-
-        if (items.length === 0) {
-
-            body.innerHTML = `
-
-                <tr>
-                    <td colspan="4"
-                        class="empty">
-                        No overdue commitments.
-                    </td>
-                </tr>
-
-            `;
-
-            return;
-
-        }
-
-
-        body.innerHTML =
-            items.map(item => `
-
-                <tr>
-
-                    <td>
-                        ${escapeHTML(item.task)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(item.owner)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            item.deadline ||
-                            "Not specified"
-                        )}
-                    </td>
-
-                    <td>
-                        ${statusBadge("OVERDUE")}
-                    </td>
-
-                </tr>
-
-            `).join("");
-
-    }
-
-
-    /* =====================================================
-       EVIDENCE
-    ===================================================== */
-
-    function updateEvidence() {
-
-        const body =
-            document.getElementById(
-                "evidenceBody"
-            );
-
-
-        const items =
-            [
-                ...allCommitments,
-                ...completedItems
-            ];
-
-
-        if (items.length === 0) {
-
-            body.innerHTML = `
-
-                <tr>
-
-                    <td colspan="4"
-                        class="empty">
-
-                        No evidence available yet.
-
-                    </td>
-
-                </tr>
-
-            `;
-
-            return;
-
-        }
-
-
-        body.innerHTML =
-            items.map(item => `
-
-                <tr>
-
-                    <td>
-                        ${escapeHTML(item.task)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(item.owner)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            item.confidence ||
-                            "Not specified"
-                        )}
-                    </td>
-
-                    <td>
-
-                        <div class="evidence-text">
-
-                            ${escapeHTML(
-                                item.evidence ||
-                                "No evidence provided"
-                            )}
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-            `).join("");
-
-    }
-
-
-    /* =====================================================
-       MEETING HISTORY
-    ===================================================== */
-
-    function updateMeetings() {
-
-        const container =
-            document.getElementById(
-                "meetingHistory"
-            );
-
-
-        const recent =
-            document.getElementById(
-                "recentMeetings"
-            );
-
-
-        if (meetings.length === 0) {
-
-            const empty = `
-                <div class="empty">
-                    No meetings analyzed yet.
-                </div>
-            `;
-
-            container.innerHTML = empty;
-
-            recent.innerHTML = empty;
-
-            return;
-
-        }
-
-
-        const html =
-            meetings.map(meeting => `
-
-                <div class="meeting-item">
-
-                    <div class="meeting-title">
-
-                        📅
-                        ${escapeHTML(
-                            meeting.title
-                        )}
-
-                    </div>
-
-                    <div class="meeting-meta">
-
-                        ${escapeHTML(
-                            meeting.date
-                        )}
-
-                        ·
-
-                        ${meeting.commitments}
-                        commitments
-
-                    </div>
-
-                </div>
-
-            `).join("");
-
-
-        container.innerHTML = html;
-
-
-        recent.innerHTML =
-            meetings
-                .slice(0, 4)
-                .map(meeting => `
-
-                    <div class="meeting-item">
-
-                        <div class="meeting-title">
-
-                            ${escapeHTML(
-                                meeting.title
-                            )}
-
-                        </div>
-
-                        <div class="meeting-meta">
-
-                            ${escapeHTML(
-                                meeting.date
-                            )}
-
-                            ·
-
-                            ${meeting.commitments}
-                            commitments
-
-                        </div>
-
-                    </div>
-
-                `)
-                .join("");
-
-    }
-
-
-    /* =====================================================
-       STATUS BADGE
-    ===================================================== */
-
-    function statusBadge(status) {
-
-        if (status === "COMPLETED") {
-
-            return `
-                <span class="badge badge-completed">
-                    COMPLETED
-                </span>
-            `;
-
-        }
-
-
-        if (status === "OVERDUE") {
-
-            return `
-                <span class="badge badge-overdue">
-                    OVERDUE
-                </span>
-            `;
-
-        }
-
-
-        if (status === "CARRIED OVER") {
-
-            return `
-                <span class="badge badge-carried">
-                    CARRIED OVER
-                </span>
-            `;
-
-        }
-
-
-        return `
-            <span class="badge badge-new">
-                NEW
-            </span>
+        container.innerHTML = `
+            <div class="empty">
+                ${escapeHTML(emptyMessage)}
+            </div>
         `;
 
+        return;
     }
 
 
-    /* =====================================================
-       MESSAGE
-    ===================================================== */
+    items.forEach(function(item) {
 
-    function showMessage(text, type) {
+        const div =
+            document.createElement("div");
 
-        const message =
-            document.getElementById(
-                "analysisMessage"
-            );
+        div.className =
+            "result-item";
 
 
-        message.textContent =
-            text;
+        div.innerHTML = `
+
+            <div class="result-task">
+                ${escapeHTML(item.task)}
+            </div>
+
+            <div class="detail">
+                <strong>Owner:</strong>
+                ${escapeHTML(item.owner)}
+            </div>
+
+            <div class="detail">
+                <strong>Deadline:</strong>
+                ${escapeHTML(item.deadline)}
+            </div>
+
+            ${statusBadge(item.status)}
+
+            <div class="evidence">
+                <strong>Evidence:</strong><br>
+                ${escapeHTML(item.evidence)}
+            </div>
+
+        `;
 
 
-        message.className =
-            "message " + type;
+        container.appendChild(div);
 
+    });
+}
+
+
+/* =====================================================
+   MEETINGS
+===================================================== */
+
+function renderMeetings() {
+
+    const container =
+        document.getElementById("meetingsList");
+
+    container.innerHTML = "";
+
+    if (!meetings || meetings.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty">
+                No meetings analyzed yet.
+            </div>
+        `;
+
+        return;
+    }
+
+    meetings.slice().reverse().forEach(function(meeting) {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "result-item";
+
+        const actionCount =
+            Array.isArray(meeting.action_items)
+                ? meeting.action_items.length
+                : 0;
+
+        const completedCount =
+            Array.isArray(meeting.completed_items)
+                ? meeting.completed_items.length
+                : 0;
+
+        div.innerHTML = `
+
+            <div class="result-task">
+                ${escapeHTML(meeting.title || "Untitled Meeting")}
+            </div>
+
+            <div class="detail">
+                Date:
+                ${escapeHTML(meeting.date || "Not specified")}
+            </div>
+
+            <div class="detail">
+                Action Items:
+                ${actionCount}
+            </div>
+
+            <div class="detail">
+                Completed:
+                ${completedCount}
+            </div>
+
+        `;
+
+        container.appendChild(div);
+
+    });
+}
+
+/* =====================================================
+   AUDIT TRAIL
+===================================================== */
+
+function renderAuditTrail() {
+
+    const container =
+        document.getElementById(
+            "auditList"
+        );
+
+
+    container.innerHTML = "";
+
+
+    const items = [
+        ...allCommitments,
+        ...completedItems
+    ];
+
+
+    if (items.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty">
+                No audit evidence yet.
+            </div>
+        `;
+
+        return;
     }
 
 
-    /* =====================================================
-       SECURITY
-    ===================================================== */
+    items.forEach(function(item) {
 
-    function escapeHTML(value) {
+        const div =
+            document.createElement("div");
 
-        if (
-            value === null ||
-            value === undefined
-        ) {
-
-            return "";
-
-        }
+        div.className =
+            "result-item";
 
 
-        return String(value)
+        div.innerHTML = `
 
-            .replaceAll(
-                "&",
-                "&amp;"
-            )
+            <div class="result-task">
+                ${escapeHTML(item.task)}
+            </div>
 
-            .replaceAll(
-                "<",
-                "&lt;"
-            )
+            <div class="detail">
+                Owner:
+                ${escapeHTML(item.owner)}
+            </div>
 
-            .replaceAll(
-                ">",
-                "&gt;"
-            )
+            <div class="evidence">
+                <strong>Original Evidence:</strong><br>
+                ${escapeHTML(item.evidence)}
+            </div>
 
-            .replaceAll(
-                '"',
-                "&quot;"
-            )
-
-            .replaceAll(
-                "'",
-                "&#039;"
-            );
-
-    }
+        `;
 
 
-    /* =====================================================
-       INITIAL STATE
-    ===================================================== */
+        container.appendChild(div);
 
-    updateDashboard();
+    });
+}
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
+
+updateDashboard();
+
+renderAllCommitments();
+
+renderNewCommitments();
+
+renderCompletedCommitments();
+
+renderCarriedOverCommitments();
+
+renderOverdueCommitments();
+
+renderMeetings();
+
+renderAuditTrail();
+// ==========================================================
+// LOAD SAVED DATA WHEN DASHBOARD OPENS
+// ==========================================================
+
+window.addEventListener("load", function() {
+    loadDashboardData();
+});
 
 </script>
 
 </body>
-
 </html>
